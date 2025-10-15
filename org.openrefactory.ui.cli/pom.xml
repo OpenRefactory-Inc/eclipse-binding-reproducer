@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <relativePath>../com.openrefactory-build/pom.xml</relativePath>
+    <groupId>org.openrefactory</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>org.openrefactory.ui.cli</artifactId>
+  <packaging>eclipse-plugin</packaging>
+  <name>org.openrefactory.ui.cli</name>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.1</version>
+		 <executions>
+		    <execution>
+		      <id>unpack-dependencies</id>
+		      <phase>prepare-package</phase>
+		      <goals>
+		        <goal>unpack-dependencies</goal>
+		      </goals>
+		      <configuration>
+		        <includes>**/*.class</includes>
+		        <excludes>
+		        	**/*.properties,
+		        	**/org/eclipse/jdt/**/*.class,
+		        	**/org/eclipse/jface/**/*.class,
+		        	**/org/eclipse/core/**/*.class,
+		        	**/org/eclipse/jgit/**/*.class,
+		        	**/org/eclipse/swt/**/*.class,
+		        	**/org/eclipse/ui/**/*.class,
+		        	**/org/eclipse/team/**/*.class,
+		        	**/org/eclipse/search/**/*.class,
+		        	**/org/eclipse/search2/**/*.class,
+		        	**/org/eclipse/jdi/**/*.class,
+		        	**/org/eclipse/e4/**/*.class,
+		        	**/org/eclipse/emf/**/*.class,
+		        	**/org/eclipse/ltk/**/*.class,
+		        	**/org/eclipse/equinox/**/*.class,
+		        	**/org/eclipse/help/**/*.class,
+		        	**/org/eclipse/text/**/*.class,
+		        	**/com/jcraft/jsch/**/*.class,
+		        	**/org/eclipse/compare/**/*.class,
+		        	**/org/eclipse/debug/**/*.class,
+		        	**/org/eclipse/osgi/container/**/*.class,
+		        	**/org/eclipse/osgi/framework/**/*.class,
+		        	**/org/eclipse/osgi/internal/**/*.class,
+		        	**/org/eclipse/osgi/launch/**/*.class,
+		        	**/org/eclipse/osgi/report/**/*.class,
+		        	**/org/eclipse/osgi/service/**/*.class,
+		        	**/org/eclipse/osgi/signedcontent/**/*.class,
+		        	**/org/eclipse/osgi/storage/**/*.class,
+		        	**/org/eclipse/osgi/storagemanager/**/*.class,
+		        	**/org/eclipse/osgi/util/Manifest*,
+		        	**/org/eclipse/osgi/util/Text*,
+		        	**/org/osgi/**/*.class,
+		        	**/org/apache/**/*.class,
+		        	**/org/bouncycastle/**/*.class,
+		        	**/com/googlecode/**/*.class,
+		        	**/com/ibm/**/*.class,
+		        	**/com/sun/**/*.class,
+		        	**/org/kxml2/**/*.class,
+		        	**/org/tukaani/**/*.class,
+		        	**/org/w3c/**/*.class,
+		        	**/org/xmlpull/**/*.class,
+		        	**/javax/**/*.class,
+					**/lib/gnu/**/*.class,
+		        </excludes>
+		        <outputDirectory>target/classes</outputDirectory>
+		        <overWriteReleases>false</overWriteReleases>
+		        <overWriteSnapshots>true</overWriteSnapshots>
+		      </configuration>
+		    </execution>
+		  </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho-version}</version>
+        <extensions>true</extensions>
+      </plugin> 
+    </plugins>
+  </build>
+
+</project>

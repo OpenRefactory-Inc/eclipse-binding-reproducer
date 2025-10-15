@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OpenRefactory - Java Client
+Bundle-SymbolicName: org.openrefactory.ui.cli;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: OpenRefactory
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Require-Bundle: org.eclipse.jface.text;bundle-version="3.28.100",
+ org.eclipse.jdt.core;bundle-version="3.43.0",
+ org.eclipse.jdt.ui;bundle-version="3.35.100",
+ org.eclipse.jface;bundle-version="3.38.0",
+ org.eclipse.core.runtime;bundle-version="3.34.0",
+ org.eclipse.core.resources;bundle-version="3.23.0",
+ org.eclipse.jgit;bundle-version="7.4.0",
+ com.jcraft.jsch;bundle-version="0.1.55"
+Export-Package: com.openrefactory.ui.cli,
+ org.openrefactory.core.model,
+ org.openrefactory.internal.core.model.eclipse
+Automatic-Module-Name: org.openrefactory.ui.cli

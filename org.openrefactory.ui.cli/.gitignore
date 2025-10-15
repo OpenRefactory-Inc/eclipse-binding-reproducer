@@ -1,0 +1,8 @@
+.DS_Store
+/bin
+/target
+/temp
+ordemo.jar
+orcvpg.dat
+ordaemon
+config.json
