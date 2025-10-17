@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -49,6 +50,14 @@ public class ORDaemon implements IApplication {
         for (IModelFileElement file : Model.getInstance().getAllSourceFiles(IModel.JAVA_LANGUAGE)) {
             final String fullPath = file.getFullPath();
             CompilationUnit cu = ASTNodeUtilities.parse(fullPath);
+            ICompilationUnit icu = (ICompilationUnit)cu.getJavaElement();
+            if (icu == null) {
+                System.err.println("MH: KABOOM ICompilationUnit not found");
+            }
+            String path = ASTNodeUtilities.getFilePathFromCompilationUnit(cu);
+            if (path == null) {
+                System.err.println("MH: KABOOM Path not found");
+            }
             if (cu != null) {
                 for (ClassInstanceCreation cic : ASTNodeUtilities.findAll(cu, ClassInstanceCreation.class)) {
                     ITypeBinding typeBinding = cic.resolveTypeBinding();

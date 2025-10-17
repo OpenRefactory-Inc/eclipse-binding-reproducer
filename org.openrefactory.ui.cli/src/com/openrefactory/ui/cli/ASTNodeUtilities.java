@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -291,6 +293,17 @@ public class ASTNodeUtilities {
             return fileData.toString();
         } catch (IOException e) {
             throw e;
+        }
+    }
+
+    public static String getFilePathFromCompilationUnit(CompilationUnit cu) {
+        try {
+            ICompilationUnit icu = (ICompilationUnit) cu.getJavaElement();
+            IResource file = icu.getResource();
+            String fileName = file.getRawLocation().toOSString();
+            return fileName;
+        } catch (Exception e) {
+            return null;
         }
     }
 }
