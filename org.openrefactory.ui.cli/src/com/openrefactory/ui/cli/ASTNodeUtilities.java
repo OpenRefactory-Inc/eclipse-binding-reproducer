@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -37,18 +38,23 @@ public class ASTNodeUtilities {
         if (fileElement == null) return null;
         ASTParser parser = ASTParser.newParser(AST.JLS21);
         parser.setKind(ASTParser.K_COMPILATION_UNIT);
+        // Must set unit name for files that are read directly from file system
+        // and not through a compilation unit
+        // If we do not set unit name explicitly, type resolution will not 
+        // work even if we set resolve bindings to true
+        parser.setUnitName(fileElement.getName());
+        parser.setEnvironment(new String[] {}, new String[] {}, new String[] {}, true);
         if (fileElement instanceof EclipseModelFileElement) {
             // If we are using eclipse model, then use the ICompilationUnit
-            parser.setSource(((EclipseModelFileElement)fileElement).getCompilationUnit());
+            try {
+                parser.setSource(((EclipseModelFileElement)fileElement).getCompilationUnit().getSource().toCharArray());
+            } catch (JavaModelException e) {
+                e.printStackTrace();
+                return null;
+            }
         } else {
             // Get the source from the source file
             File file = new File(fileElement.getFullPath());
-            // Must set unit name for files that are read directly from file system
-            // and not through a compilation unit
-            // If we do not set unit name explicitly, type resolution will not 
-            // work even if we set resolve bindings to true
-            parser.setUnitName(fileElement.getName());
-            parser.setEnvironment(null, null, null, true);
             try {
                 parser.setSource(readFileToString(file).toCharArray());
             } catch (IOException e) {
@@ -287,5 +293,4 @@ public class ASTNodeUtilities {
             throw e;
         }
     }
-    
 }
