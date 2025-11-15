@@ -12,7 +12,6 @@ import java.util.Stack;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -47,13 +46,7 @@ public class ASTNodeUtilities {
         parser.setUnitName(fileElement.getName());
         parser.setEnvironment(new String[] {}, new String[] {}, new String[] {}, true);
         if (fileElement instanceof EclipseModelFileElement) {
-            // If we are using eclipse model, then use the ICompilationUnit
-            try {
-                parser.setSource(((EclipseModelFileElement)fileElement).getCompilationUnit().getSource().toCharArray());
-            } catch (JavaModelException e) {
-                e.printStackTrace();
-                return null;
-            }
+            parser.setSource(((EclipseModelFileElement)fileElement).getCompilationUnit());
         } else {
             // Get the source from the source file
             File file = new File(fileElement.getFullPath());

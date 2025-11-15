@@ -6,10 +6,11 @@ import java.io.IOException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.openrefactory.core.model.IModel;
 import org.openrefactory.core.model.IModelFileElement;
 import org.openrefactory.core.model.Model;
@@ -36,11 +37,10 @@ public class ORDaemon implements IApplication {
      */
     @Override
     public Object start(IApplicationContext context) throws Exception {
-        // Bug 4492
+        // Bug 4636
         // Run this by uncommenting the next few lines all the way to the line
-        //     // Bug 4493
-        // and commenting all the lines upto the end of the method.
-        String currentProjectPath = "/Users/munawar/Desktop/orjava/source/binding-reproducrer-project-bug4492";
+        //     // Bug 4492
+        String currentProjectPath = "/Users/munawar/Desktop/orjava/source/solr/solr/core";
         File currentProjectDirectory = new File(currentProjectPath);
         try {
             Model.useModel(new EclipseModel(currentProjectDirectory));
@@ -50,22 +50,58 @@ public class ORDaemon implements IApplication {
         for (IModelFileElement file : Model.getInstance().getAllSourceFiles(IModel.JAVA_LANGUAGE)) {
             final String fullPath = file.getFullPath();
             CompilationUnit cu = ASTNodeUtilities.parse(fullPath);
-            ICompilationUnit icu = (ICompilationUnit)cu.getJavaElement();
-            if (icu == null) {
-                System.err.println("MH: KABOOM ICompilationUnit not found");
-            }
-            String path = ASTNodeUtilities.getFilePathFromCompilationUnit(cu);
-            if (path == null) {
-                System.err.println("MH: KABOOM Path not found");
-            }
-            if (cu != null) {
-                for (ClassInstanceCreation cic : ASTNodeUtilities.findAll(cu, ClassInstanceCreation.class)) {
-                    ITypeBinding typeBinding = cic.resolveTypeBinding();
-                    System.err.println("MH: TypeBinding " + typeBinding);
+            Iterable<MethodInvocation> methodInvocations = ASTNodeUtilities.findAll(cu, MethodInvocation.class);
+            for (MethodInvocation methodInvocation: methodInvocations) {
+                if (!methodInvocation.toString().equals("solrIndexSearcher.getRawReader()")) {
+                    continue;
+                }
+                Iterable<SimpleName> names = ASTNodeUtilities.findAll(methodInvocation, SimpleName.class);
+                for (SimpleName name: names) {
+                    if (name.getIdentifier().equals("solrIndexSearcher")) {
+                        IBinding binding = name.resolveBinding();
+                        if (binding != null && binding.getJavaElement() instanceof ILocalVariable) {
+                            // Exception in binding.getJavaElement()
+                        } else if (binding == null) {
+                            System.err.println("MH: NOPE");
+                        }
+                    }
                 }
             }
         }
+        System.err.println("MH: DONE");
         return null;
+        
+        
+        // Bug 4492
+        // Run this by uncommenting the next few lines all the way to the line
+        //     // Bug 4493
+        // and commenting all the lines upto the end of the method.
+//        String currentProjectPath = "/Users/munawar/Desktop/orjava/source/binding-reproducrer-project-bug4492";
+//        File currentProjectDirectory = new File(currentProjectPath);
+//        try {
+//            Model.useModel(new EclipseModel(currentProjectDirectory));
+//        } catch (CoreException e) {
+//            e.printStackTrace();
+//        }
+//        for (IModelFileElement file : Model.getInstance().getAllSourceFiles(IModel.JAVA_LANGUAGE)) {
+//            final String fullPath = file.getFullPath();
+//            CompilationUnit cu = ASTNodeUtilities.parse(fullPath);
+//            ICompilationUnit icu = (ICompilationUnit)cu.getJavaElement();
+//            if (icu == null) {
+//                System.err.println("MH: KABOOM ICompilationUnit not found");
+//            }
+//            String path = ASTNodeUtilities.getFilePathFromCompilationUnit(cu);
+//            if (path == null) {
+//                System.err.println("MH: KABOOM Path not found");
+//            }
+//            if (cu != null) {
+//                for (ClassInstanceCreation cic : ASTNodeUtilities.findAll(cu, ClassInstanceCreation.class)) {
+//                    ITypeBinding typeBinding = cic.resolveTypeBinding();
+//                    System.err.println("MH: TypeBinding " + typeBinding);
+//                }
+//            }
+//        }
+//        return null;
         
         // Bug 4493
         // Run this by uncommenting the next few lines
